@@ -1,0 +1,23 @@
+// Palette imposée du site « Touche pas au klaxon ».
+// Les futurs sites thématiques (CE, billetterie…) n'ont qu'à remplacer ces
+// valeurs : tout le reste du style repose sur les variables Bootstrap.
+$palette-light: #f1f8fc;
+$palette-blue: #0074c7;
+$palette-blue-dark: #00497c;
+$palette-slate: #384050;
+$palette-red: #cd2c2e;
+$palette-green: #82b864;
+
+// Variables Bootstrap surchargées.
+$primary: $palette-blue;
+$secondary: $palette-blue-dark;
+$success: $palette-green;
+$danger: $palette-red;
+$light: $palette-light;
+$dark: $palette-slate;
+
+$border-radius: 0.75rem;
+$border-radius-lg: 1rem;
+
+// Chemin des polices Bootstrap Icons, relatif au CSS compilé (public/css).
+$bootstrap-icons-font-dir: "../fonts";

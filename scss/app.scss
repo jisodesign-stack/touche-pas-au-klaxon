@@ -1,0 +1,41 @@
+// Point d'entrée Sass : npm run build:css
+@import "bootstrap/scss/functions";
+@import "variables";
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-icons/font/bootstrap-icons";
+
+.app-navbar {
+  background-color: var(--bs-light);
+  border: 2px solid var(--bs-dark);
+  border-radius: var(--bs-border-radius-lg);
+}
+
+.app-table {
+  overflow: hidden;
+  border-radius: var(--bs-border-radius);
+
+  th,
+  td {
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .btn-icon {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bs-body-color);
+
+    &:hover {
+      color: var(--bs-primary);
+    }
+
+    &.text-danger:hover {
+      color: var(--bs-danger);
+    }
+  }
+}
+
+.app-footer {
+  color: var(--bs-secondary-color);
+}
