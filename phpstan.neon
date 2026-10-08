@@ -5,6 +5,9 @@ parameters:
         - config
         - bin
         - public/index.php
+        - tests/bootstrap.php
+        - tests/Unit
+        - tests/Integration
     excludePaths:
         # Les vues sont des templates dont les variables sont injectées par extract().
         - src/Views
