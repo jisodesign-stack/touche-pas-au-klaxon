@@ -10,8 +10,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Administration des trajets : liste de tous les trajets et suppression.
+ */
 final class TripController extends BaseController
 {
+    /**
+     * Liste tous les trajets (y compris passés ou complets).
+     */
     public function index(Response $response): Response
     {
         return $this->view($response, 'admin/trips', [
@@ -20,6 +26,11 @@ final class TripController extends BaseController
         ]);
     }
 
+    /**
+     * Supprime un trajet, quel que soit son auteur.
+     *
+     * @param string $id Identifiant du trajet (paramètre d'URL)
+     */
     public function delete(Request $request, Response $response, string $id): Response|RedirectResponse
     {
         if (!$this->csrfValid($request)) {

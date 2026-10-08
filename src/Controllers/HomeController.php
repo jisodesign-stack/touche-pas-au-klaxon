@@ -6,12 +6,19 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Repositories\TripRepository;
+use App\Security\Auth;
 use Buki\Router\Http\Controller;
 use PDOException;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Page d'accueil : liste publique des trajets à venir ayant encore des places.
+ */
 final class HomeController extends Controller
 {
+    /**
+     * Affiche les trajets disponibles ; répond 503 si la base est indisponible.
+     */
     public function index(Response $response): Response
     {
         try {
@@ -27,6 +34,7 @@ final class HomeController extends Controller
             'title' => 'Trajets disponibles',
             'trips' => $trips,
             'error' => $error,
+            'currentUser' => Auth::user(),
         ]));
 
         return $response;

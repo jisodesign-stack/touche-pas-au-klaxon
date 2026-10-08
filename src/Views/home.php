@@ -2,10 +2,11 @@
 
 use App\Core\View;
 use App\Models\Trip;
-use App\Security\Auth;
+use App\Models\User;
 
 /** @var list<Trip> $trips */
-$isLogged = Auth::check();
+/** @var User|null $currentUser */
+$format = static fn (DateTimeImmutable $date): string => $date->format('d/m/Y à H\hi');
 ?>
 <h1 class="h3 mb-3"><?= View::escape($title) ?></h1>
 
@@ -19,12 +20,12 @@ $isLogged = Auth::check();
             <thead>
                 <tr>
                     <th>Départ</th>
-                    <th>Date et heure de départ</th>
+                    <th>Date de départ</th>
                     <th>Arrivée</th>
-                    <th>Date et heure d'arrivée</th>
-                    <th>Places</th>
-                    <?php if ($isLogged): ?>
-                        <th>Contact</th>
+                    <th>Date d'arrivée</th>
+                    <th>Places disponibles</th>
+                    <?php if ($currentUser !== null): ?>
+                        <th><span class="visually-hidden">Actions</span></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -32,14 +33,28 @@ $isLogged = Auth::check();
                 <?php foreach ($trips as $trip): ?>
                     <tr>
                         <td><?= View::escape($trip->agenceDepart) ?></td>
-                        <td><?= $trip->dateDepart->format('d/m/Y à H\hi') ?></td>
+                        <td><?= $format($trip->dateDepart) ?></td>
                         <td><?= View::escape($trip->agenceArrivee) ?></td>
-                        <td><?= $trip->dateArrivee->format('d/m/Y à H\hi') ?></td>
-                        <td><?= $trip->placesDisponibles ?> / <?= $trip->placesTotal ?></td>
-                        <?php if ($isLogged): ?>
+                        <td><?= $format($trip->dateArrivee) ?></td>
+                        <td><?= $trip->placesDisponibles ?></td>
+                        <?php if ($currentUser !== null): ?>
                             <td>
-                                <?= View::escape($trip->auteurNom) ?><br>
-                                <small><i class="bi bi-telephone" aria-hidden="true"></i> <?= View::escape($trip->auteurTelephone) ?> · <i class="bi bi-envelope" aria-hidden="true"></i> <?= View::escape($trip->auteurEmail) ?></small>
+                                <button type="button" class="btn-icon me-2" title="Détails" aria-label="Détails"
+                                        data-bs-toggle="modal" data-bs-target="#trip-modal-<?= $trip->id ?>">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <?php if ($trip->auteurId === $currentUser->id): ?>
+                                    <a href="/trajets/<?= $trip->id ?>/modifier" class="btn-icon me-2" title="Modifier" aria-label="Modifier">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <form method="post" action="/trajets/<?= $trip->id ?>/supprimer" class="d-inline"
+                                          onsubmit="return confirm('Supprimer ce trajet ?');">
+                                        <?= View::csrfField() ?>
+                                        <button type="submit" class="btn-icon text-danger" title="Supprimer" aria-label="Supprimer">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         <?php endif; ?>
                     </tr>
@@ -47,7 +62,35 @@ $isLogged = Auth::check();
             </tbody>
         </table>
     </div>
-    <?php if (!$isLogged): ?>
-        <p class="text-muted"><a href="/connexion">Connectez-vous</a> pour voir les coordonnées des conducteurs.</p>
+
+    <?php if ($currentUser === null): ?>
+        <p class="text-muted"><a href="/connexion">Connectez-vous</a> pour consulter le détail des trajets et en proposer.</p>
+    <?php else: ?>
+        <?php foreach ($trips as $trip): ?>
+            <div class="modal fade" id="trip-modal-<?= $trip->id ?>" tabindex="-1" aria-labelledby="trip-modal-title-<?= $trip->id ?>" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="modal-title h5" id="trip-modal-title-<?= $trip->id ?>">
+                                <?= View::escape($trip->agenceDepart) ?> &rarr; <?= View::escape($trip->agenceArrivee) ?>
+                            </h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                        </div>
+                        <div class="modal-body">
+                            <dl class="row mb-0">
+                                <dt class="col-sm-5">Proposé par</dt>
+                                <dd class="col-sm-7"><?= View::escape($trip->auteurNom) ?></dd>
+                                <dt class="col-sm-5">Téléphone</dt>
+                                <dd class="col-sm-7"><?= View::escape($trip->auteurTelephone) ?></dd>
+                                <dt class="col-sm-5">Email</dt>
+                                <dd class="col-sm-7"><?= View::escape($trip->auteurEmail) ?></dd>
+                                <dt class="col-sm-5">Nombre total de places</dt>
+                                <dd class="col-sm-7 mb-0"><?= $trip->placesTotal ?></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
     <?php endif; ?>
 <?php endif; ?>

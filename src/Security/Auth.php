@@ -8,12 +8,23 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use PDOException;
 
+/**
+ * Authentification : connexion, utilisateur courant et déconnexion, basées sur la session PHP.
+ */
 final class Auth
 {
+    /** Clé de session contenant l'identifiant de l'utilisateur connecté. */
     private const KEY = 'user_id';
 
+    /** Cache de l'utilisateur courant pour la durée de la requête. */
     private static ?User $user = null;
 
+    /**
+     * Tente une connexion par email et mot de passe ; ouvre la session en cas de succès.
+     *
+     * @return bool Vrai si les identifiants sont corrects
+     * @throws PDOException Si la base est injoignable
+     */
     public static function attempt(string $email, string $password): bool
     {
         $user = (new UserRepository())->findByEmail(strtolower(trim($email)));
@@ -32,6 +43,9 @@ final class Auth
         return true;
     }
 
+    /**
+     * Utilisateur connecté, ou null (anonyme, session obsolète ou base indisponible).
+     */
     public static function user(): ?User
     {
         if (self::$user === null && isset($_SESSION[self::KEY])) {
@@ -52,11 +66,17 @@ final class Auth
         return self::$user;
     }
 
+    /**
+     * Indique si un utilisateur est connecté.
+     */
     public static function check(): bool
     {
         return self::user() !== null;
     }
 
+    /**
+     * Ferme la session : efface les données et renouvelle l'identifiant de session.
+     */
     public static function logout(): void
     {
         self::$user = null;

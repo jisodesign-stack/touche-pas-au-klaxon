@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
-// Crée la base, le schéma et le jeu de données de démo.
-// Usage : php bin/db-install.php [--no-seed]
+/**
+ * Script d'installation de la base : (re)crée la base DB_NAME, le schéma et le jeu de données de démo.
+ *
+ * Attention : la base existante portant ce nom est supprimée.
+ *
+ * Usage : php bin/db-install.php [--no-seed]
+ */
 
 use App\Core\Database;
 use Dotenv\Dotenv;
