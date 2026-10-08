@@ -80,7 +80,11 @@ final class AuthController extends Controller
     private function loginError(Response $response, int $status, string $error, string $email): Response
     {
         $response->setStatusCode($status);
-        $response->setContent(View::render('auth/login', ['title' => 'Connexion', 'error' => $error, 'email' => $email]));
+        $response->setContent(View::render('auth/login', [
+            'title' => 'Connexion',
+            'error' => $error,
+            'email' => $email,
+        ]));
 
         return $response;
     }

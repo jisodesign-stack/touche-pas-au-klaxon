@@ -7,6 +7,9 @@ namespace Tests\Unit\Security;
 use App\Security\Csrf;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests de la protection CSRF (génération et vérification du jeton).
+ */
 final class CsrfTest extends TestCase
 {
     protected function setUp(): void

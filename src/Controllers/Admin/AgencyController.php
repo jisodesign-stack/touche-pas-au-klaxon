@@ -90,7 +90,14 @@ final class AgencyController extends BaseController
         $error = $this->validateName($nom, $agency['id']);
 
         if ($error !== null) {
-            return $this->form($response, "Modifier l'agence", "/admin/agences/{$agency['id']}/modifier", $nom, $error, 422);
+            return $this->form(
+                $response,
+                "Modifier l'agence",
+                "/admin/agences/{$agency['id']}/modifier",
+                $nom,
+                $error,
+                422,
+            );
         }
 
         (new AgencyRepository())->update($agency['id'], $nom);
@@ -116,7 +123,11 @@ final class AgencyController extends BaseController
         }
 
         if ($agencies->tripCount($agency['id']) > 0) {
-            return $this->redirect('/admin/agences', 'danger', 'Cette agence est utilisée par des trajets : suppression impossible.');
+            return $this->redirect(
+                '/admin/agences',
+                'danger',
+                'Cette agence est utilisée par des trajets : suppression impossible.',
+            );
         }
 
         $agencies->delete($agency['id']);
@@ -142,8 +153,14 @@ final class AgencyController extends BaseController
     /**
      * Affiche le formulaire d'agence (création ou modification).
      */
-    private function form(Response $response, string $title, string $action, string $nom, ?string $error = null, int $status = 200): Response
-    {
+    private function form(
+        Response $response,
+        string $title,
+        string $action,
+        string $nom,
+        ?string $error = null,
+        int $status = 200,
+    ): Response {
         return $this->view($response, 'admin/agency_form', [
             'title' => $title,
             'action' => $action,

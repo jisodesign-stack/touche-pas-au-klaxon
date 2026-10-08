@@ -22,14 +22,26 @@ use Symfony\Component\HttpFoundation\Response;
 final class TripController extends BaseController
 {
     /** Champs du formulaire lus dans la requête. */
-    private const FIELDS = ['agence_depart_id', 'agence_arrivee_id', 'date_depart', 'date_arrivee', 'places_total', 'places_disponibles'];
+    private const FIELDS = [
+        'agence_depart_id',
+        'agence_arrivee_id',
+        'date_depart',
+        'date_arrivee',
+        'places_total',
+        'places_disponibles',
+    ];
 
     /**
      * Affiche le formulaire de création d'un trajet.
      */
     public function create(Response $response): Response
     {
-        return $this->form($response, 'Proposer un trajet', '/trajets', ['places_total' => '4', 'places_disponibles' => '4']);
+        return $this->form(
+            $response,
+            'Proposer un trajet',
+            '/trajets',
+            ['places_total' => '4', 'places_disponibles' => '4'],
+        );
     }
 
     /**
@@ -94,7 +106,14 @@ final class TripController extends BaseController
         $result = (new TripValidator())->validate($input, $this->agencyIds(), $trip->dateDepart);
 
         if ($result['data'] === null) {
-            return $this->form($response, 'Modifier le trajet', "/trajets/{$trip->id}/modifier", $input, $result['errors'], 422);
+            return $this->form(
+                $response,
+                'Modifier le trajet',
+                "/trajets/{$trip->id}/modifier",
+                $input,
+                $result['errors'],
+                422,
+            );
         }
 
         (new TripRepository())->update($trip->id, $this->userId(), $result['data']);
@@ -173,8 +192,14 @@ final class TripController extends BaseController
      * @param array<string, string> $values Valeurs saisies ou initiales
      * @param array<string, string> $errors Messages d'erreur par champ
      */
-    private function form(Response $response, string $title, string $action, array $values, array $errors = [], int $status = 200): Response
-    {
+    private function form(
+        Response $response,
+        string $title,
+        string $action,
+        array $values,
+        array $errors = [],
+        int $status = 200,
+    ): Response {
         return $this->view($response, 'trips/form', [
             'title' => $title,
             'action' => $action,

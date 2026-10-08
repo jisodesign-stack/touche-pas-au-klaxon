@@ -9,6 +9,9 @@ use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests des contrôles de cohérence d'un trajet (agences, dates, places).
+ */
 final class TripValidatorTest extends TestCase
 {
     private const AGENCIES = [1, 2, 3];
@@ -45,7 +48,10 @@ final class TripValidatorTest extends TestCase
         yield "agence d'arrivée absente" => [['agence_arrivee_id' => ''], 'agence_arrivee_id'];
         yield 'mêmes agences' => [['agence_arrivee_id' => '1'], 'agence_arrivee_id'];
         yield 'date de départ invalide' => [['date_depart' => 'demain'], 'date_depart'];
-        yield 'date de départ passée' => [['date_depart' => '2020-01-01T08:00', 'date_arrivee' => '2020-01-01T12:00'], 'date_depart'];
+        yield 'date de départ passée' => [
+            ['date_depart' => '2020-01-01T08:00', 'date_arrivee' => '2020-01-01T12:00'],
+            'date_depart',
+        ];
         yield 'arrivée avant le départ' => [['date_arrivee' => '2000-01-01T00:00'], 'date_arrivee'];
         yield 'zéro place' => [['places_total' => '0', 'places_disponibles' => '0'], 'places_total'];
         yield 'trop de places' => [['places_total' => '10'], 'places_total'];

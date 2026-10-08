@@ -7,6 +7,9 @@ namespace Tests\Integration;
 use App\Repositories\TripRepository;
 use App\Repositories\UserRepository;
 
+/**
+ * Tests de la lecture et de la suppression des utilisateurs (suppression en cascade des trajets).
+ */
 final class UserRepositoryTest extends DatabaseTestCase
 {
     public function testFindByEmailAndById(): void

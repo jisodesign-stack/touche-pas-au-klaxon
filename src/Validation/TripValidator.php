@@ -9,6 +9,16 @@ use DateTimeImmutable;
 /**
  * Contrôles de cohérence d'un trajet : agences existantes et différentes, dates valides,
  * départ dans le futur, arrivée après le départ, nombres de places cohérents.
+ *
+ * @phpstan-type TripData array{
+ *     depart_id: int,
+ *     arrivee_id: int,
+ *     date_depart: DateTimeImmutable,
+ *     date_arrivee: DateTimeImmutable,
+ *     places_total: int,
+ *     places_disponibles: int
+ * }
+ * @phpstan-type ValidationResult array{errors: array<string, string>, data: TripData|null}
  */
 final class TripValidator
 {
@@ -23,8 +33,9 @@ final class TripValidator
      *
      * @param array<string, mixed> $input Données brutes du formulaire
      * @param list<int> $agencyIds Identifiants des agences existantes
-     * @param DateTimeImmutable|null $currentDeparture Départ actuel du trajet modifié : une date passée inchangée reste acceptée
-     * @return array{errors: array<string, string>, data: array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int}|null} Messages d'erreur par champ, et données typées si tout est valide
+     * @param DateTimeImmutable|null $currentDeparture Départ actuel du trajet modifié :
+     *        une date passée inchangée reste acceptée
+     * @return ValidationResult Messages d'erreur par champ, et données typées si tout est valide
      */
     public function validate(array $input, array $agencyIds, ?DateTimeImmutable $currentDeparture = null): array
     {
@@ -66,8 +77,15 @@ final class TripValidator
             $errors['places_disponibles'] = 'Les places disponibles ne peuvent pas dépasser le total.';
         }
 
-        if ($errors !== [] || $departId === null || $arriveeId === null || $dateDepart === null
-            || $dateArrivee === null || $total === null || $dispo === null) {
+        if (
+            $errors !== []
+            || $departId === null
+            || $arriveeId === null
+            || $dateDepart === null
+            || $dateArrivee === null
+            || $total === null
+            || $dispo === null
+        ) {
             return ['errors' => $errors, 'data' => null];
         }
 
@@ -107,9 +125,8 @@ final class TripValidator
 
         $date = DateTimeImmutable::createFromFormat(self::DATE_FORMAT, $value);
         $errors = DateTimeImmutable::getLastErrors();
+        $isClean = $errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0);
 
-        return $date !== false && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))
-            ? $date
-            : null;
+        return $date !== false && $isClean ? $date : null;
     }
 }

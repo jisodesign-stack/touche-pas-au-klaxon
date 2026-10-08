@@ -7,6 +7,9 @@ namespace Tests\Unit\Core;
 use App\Core\Flash;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests des messages flash (lecture unique).
+ */
 final class FlashTest extends TestCase
 {
     protected function setUp(): void

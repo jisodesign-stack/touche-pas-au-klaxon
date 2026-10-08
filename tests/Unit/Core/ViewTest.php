@@ -8,6 +8,9 @@ use App\Core\View;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
+/**
+ * Tests du moteur de vues (échappement, layout, champ CSRF).
+ */
 final class ViewTest extends TestCase
 {
     protected function setUp(): void
@@ -18,7 +21,10 @@ final class ViewTest extends TestCase
 
     public function testEscapeNeutralizesHtml(): void
     {
-        $this->assertSame('&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;', View::escape('<script>alert("x")</script>'));
+        $this->assertSame(
+            '&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;',
+            View::escape('<script>alert("x")</script>'),
+        );
         $this->assertSame('', View::escape(null));
     }
 

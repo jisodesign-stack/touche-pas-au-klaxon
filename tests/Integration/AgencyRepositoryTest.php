@@ -7,6 +7,9 @@ namespace Tests\Integration;
 use App\Repositories\AgencyRepository;
 use PDOException;
 
+/**
+ * Tests des écritures sur la table agences (création, renommage, suppression, contraintes).
+ */
 final class AgencyRepositoryTest extends DatabaseTestCase
 {
     public function testCreateAddsAnAgency(): void

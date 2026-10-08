@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<ruleset name="Touche pas au klaxon">
+    <description>PSR-12 ; les vues (templates) ne sont pas analysées.</description>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+
+    <file>src</file>
+    <file>config</file>
+    <file>bin</file>
+    <file>public/index.php</file>
+    <file>tests</file>
+
+    <exclude-pattern>src/Views/*</exclude-pattern>
+    <exclude-pattern>tests/Support/*</exclude-pattern>
+
+    <rule ref="PSR12"/>
+</ruleset>
