@@ -15,6 +15,7 @@ final class Application
     public function __construct(private readonly string $basePath)
     {
         Dotenv::createImmutable($this->basePath)->safeLoad();
+        date_default_timezone_set('Europe/Paris');
 
         /** @var array{name: string, env: string, debug: bool} $config */
         $config = require $this->basePath . '/config/app.php';
