@@ -47,8 +47,10 @@ L'application est alors accessible sur http://127.0.0.1:8000.
 |---|---|
 | `npm run build` | Compile le Sass et copie les assets dans `public/` |
 | `npm run watch` | Recompile le Sass à chaque modification |
-| `composer test` | Lance les tests PHPUnit |
+| `composer test` | Lance les tests PHPUnit (unitaires + intégration) |
 | `composer analyse` | Lance l'analyse statique PHPStan (niveau 6) |
+
+Les tests d'intégration couvrent toutes les opérations d'écriture en base (création, modification, suppression des trajets, des agences et des utilisateurs). Ils utilisent une base dédiée `touche_pas_au_klaxon_test` (modifiable via `DB_NAME_TEST`), créée automatiquement, et chaque test est annulé par une transaction : la base de développement n'est jamais modifiée. Sans serveur MySQL joignable, ils sont ignorés.
 
 Ces deux dernières commandes sont aussi exécutées par la CI GitHub Actions (`.github/workflows/ci.yml`), qui vérifie en plus que le schéma et le jeu de données SQL s'installent sur MySQL.
 
