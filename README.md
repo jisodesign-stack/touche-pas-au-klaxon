@@ -47,8 +47,10 @@ L'application est alors accessible sur http://127.0.0.1:8000.
 |---|---|
 | `npm run build` | Compile le Sass et copie les assets dans `public/` |
 | `npm run watch` | Recompile le Sass à chaque modification |
-| `vendor/bin/phpunit` | Lance les tests |
-| `vendor/bin/phpstan analyse` | Lance l'analyse statique |
+| `composer test` | Lance les tests PHPUnit |
+| `composer analyse` | Lance l'analyse statique PHPStan (niveau 6) |
+
+Ces deux dernières commandes sont aussi exécutées par la CI GitHub Actions (`.github/workflows/ci.yml`), qui vérifie en plus que le schéma et le jeu de données SQL s'installent sur MySQL.
 
 ## Structure du projet
 
