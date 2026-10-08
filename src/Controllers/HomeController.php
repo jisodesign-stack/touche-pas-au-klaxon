@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Core\View;
 use App\Repositories\TripRepository;
+use App\Security\Auth;
 use Buki\Router\Http\Controller;
 use PDOException;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ final class HomeController extends Controller
             'title' => 'Trajets disponibles',
             'trips' => $trips,
             'error' => $error,
+            'currentUser' => Auth::user(),
         ]));
 
         return $response;
