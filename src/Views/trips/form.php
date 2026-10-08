@@ -23,6 +23,30 @@ $agencyOptions = static function (string $key) use ($agencies, $values): string 
 <h1 class="h3 mb-3"><?= View::escape($title) ?></h1>
 <form method="post" action="<?= View::escape($action) ?>" class="row g-3" novalidate>
     <?= View::csrfField() ?>
+    <?php if ($user !== null): ?>
+        <div class="col-12">
+            <h2 class="h6 text-muted mb-0">Personne à contacter</h2>
+        </div>
+        <div class="col-md-6">
+            <label for="contact_prenom" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="contact_prenom" value="<?= View::escape($user->prenom) ?>" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="contact_nom" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="contact_nom" value="<?= View::escape($user->nom) ?>" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="contact_email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="contact_email" value="<?= View::escape($user->email) ?>" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="contact_telephone" class="form-label">Téléphone</label>
+            <input type="tel" class="form-control" id="contact_telephone" value="<?= View::escape($user->telephone) ?>" readonly>
+        </div>
+        <div class="col-12">
+            <h2 class="h6 text-muted mb-0 mt-2">Trajet</h2>
+        </div>
+    <?php endif; ?>
     <div class="col-md-6">
         <label for="agence_depart_id" class="form-label">Agence de départ</label>
         <select class="form-select<?= $invalid('agence_depart_id') ?>" id="agence_depart_id" name="agence_depart_id" required>
@@ -59,6 +83,6 @@ $agencyOptions = static function (string $key) use ($agencies, $values): string 
     </div>
     <div class="col-12">
         <button type="submit" class="btn btn-primary">Enregistrer</button>
-        <a href="/mes-trajets" class="btn btn-link">Annuler</a>
+        <a href="/" class="btn btn-link">Annuler</a>
     </div>
 </form>

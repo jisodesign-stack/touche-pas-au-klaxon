@@ -33,12 +33,6 @@ final class TripRepository
     }
 
     /** @return list<Trip> */
-    public function findByAuthor(int $authorId): array
-    {
-        return $this->fetchAll('WHERE t.auteur_id = :auteur ORDER BY t.date_depart DESC', ['auteur' => $authorId]);
-    }
-
-    /** @return list<Trip> */
     public function findAll(): array
     {
         return $this->fetchAll('ORDER BY t.date_depart DESC');
