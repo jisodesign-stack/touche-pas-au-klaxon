@@ -8,6 +8,7 @@ use App\Core\View;
 use App\Security\Auth;
 use App\Security\Csrf;
 use Buki\Router\Http\Controller;
+use PDOException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,15 @@ final class AuthController extends Controller
             return $this->loginError($response, 419, 'Session expirée, veuillez réessayer.', $email);
         }
 
-        if (!Auth::attempt($email, $password)) {
+        try {
+            $authenticated = Auth::attempt($email, $password);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+
+            return $this->loginError($response, 503, 'Service momentanément indisponible, veuillez réessayer.', $email);
+        }
+
+        if (!$authenticated) {
             return $this->loginError($response, 401, 'Email ou mot de passe incorrect.', $email);
         }
 
