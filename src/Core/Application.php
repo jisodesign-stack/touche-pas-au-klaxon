@@ -21,14 +21,32 @@ final class Application
         $this->config = $config;
 
         View::configure($this->basePath . '/src/Views', $this->config['name']);
+        $this->startSession();
+    }
+
+    private function startSession(): void
+    {
+        ini_set('session.use_strict_mode', '1');
+        session_set_cookie_params([
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        ]);
+        session_start();
     }
 
     public function run(): void
     {
         $router = new Router([
             'debug' => $this->config['debug'],
-            'paths' => ['controllers' => $this->basePath . '/src/Controllers'],
-            'namespaces' => ['controllers' => 'App\\Controllers'],
+            'paths' => [
+                'controllers' => $this->basePath . '/src/Controllers',
+                'middlewares' => $this->basePath . '/src/Middleware',
+            ],
+            'namespaces' => [
+                'controllers' => 'App\\Controllers',
+                'middlewares' => 'App\\Middleware',
+            ],
             'base_folder' => $this->basePath . '/public',
         ]);
 

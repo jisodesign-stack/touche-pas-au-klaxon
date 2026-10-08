@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Security\Csrf;
 use RuntimeException;
 
 final class View
@@ -28,6 +29,11 @@ final class View
     public static function escape(?string $value): string
     {
         return htmlspecialchars($value ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    public static function csrfField(): string
+    {
+        return '<input type="hidden" name="_csrf" value="' . self::escape(Csrf::token()) . '">';
     }
 
     /** @param array<string, mixed> $data */

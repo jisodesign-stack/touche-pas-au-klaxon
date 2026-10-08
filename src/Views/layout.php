@@ -1,4 +1,4 @@
-<?php use App\Core\View; ?>
+<?php use App\Core\View; use App\Security\Auth; $currentUser = Auth::user(); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,6 +11,15 @@
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="/"><?= View::escape($appName) ?></a>
+            <?php if ($currentUser !== null): ?>
+                <form method="post" action="/deconnexion" class="d-flex align-items-center gap-3 m-0">
+                    <?= View::csrfField() ?>
+                    <span class="navbar-text"><?= View::escape($currentUser->fullName()) ?></span>
+                    <button type="submit" class="btn btn-outline-light btn-sm">Déconnexion</button>
+                </form>
+            <?php else: ?>
+                <a class="btn btn-outline-light btn-sm" href="/connexion">Connexion</a>
+            <?php endif; ?>
         </div>
     </nav>
     <main class="container py-4">
