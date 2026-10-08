@@ -11,8 +11,14 @@ use Buki\Router\Http\Controller;
 use PDOException;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Page d'accueil : liste publique des trajets à venir ayant encore des places.
+ */
 final class HomeController extends Controller
 {
+    /**
+     * Affiche les trajets disponibles ; répond 503 si la base est indisponible.
+     */
     public function index(Response $response): Response
     {
         try {

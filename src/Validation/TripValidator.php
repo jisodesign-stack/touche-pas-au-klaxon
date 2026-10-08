@@ -6,15 +6,25 @@ namespace App\Validation;
 
 use DateTimeImmutable;
 
+/**
+ * Contrôles de cohérence d'un trajet : agences existantes et différentes, dates valides,
+ * départ dans le futur, arrivée après le départ, nombres de places cohérents.
+ */
 final class TripValidator
 {
+    /** Format envoyé par les champs HTML datetime-local. */
     private const DATE_FORMAT = 'Y-m-d\TH:i';
+
+    /** Nombre maximal de places d'un véhicule. */
     private const MAX_PLACES = 9;
 
     /**
-     * @param array<string, mixed> $input
-     * @param list<int> $agencyIds
-     * @return array{errors: array<string, string>, data: array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int}|null}
+     * Valide les données du formulaire.
+     *
+     * @param array<string, mixed> $input Données brutes du formulaire
+     * @param list<int> $agencyIds Identifiants des agences existantes
+     * @param DateTimeImmutable|null $currentDeparture Départ actuel du trajet modifié : une date passée inchangée reste acceptée
+     * @return array{errors: array<string, string>, data: array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int}|null} Messages d'erreur par champ, et données typées si tout est valide
      */
     public function validate(array $input, array $agencyIds, ?DateTimeImmutable $currentDeparture = null): array
     {
@@ -74,6 +84,9 @@ final class TripValidator
         ];
     }
 
+    /**
+     * Convertit une saisie en entier positif, ou null si elle n'est pas un entier valide.
+     */
     private function integer(mixed $value): ?int
     {
         if (is_string($value) && preg_match('/^\d{1,9}$/', trim($value)) === 1) {
@@ -83,6 +96,9 @@ final class TripValidator
         return null;
     }
 
+    /**
+     * Convertit une saisie datetime-local en date, ou null si le format est invalide.
+     */
     private function date(mixed $value): ?DateTimeImmutable
     {
         if (!is_string($value)) {

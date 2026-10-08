@@ -11,8 +11,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Administration des utilisateurs : liste et suppression.
+ *
+ * Les employés viennent du système RH : il n'y a ni création ni modification.
+ */
 final class UserController extends BaseController
 {
+    /**
+     * Liste les utilisateurs.
+     */
     public function index(Response $response): Response
     {
         return $this->view($response, 'admin/users', [
@@ -22,6 +30,11 @@ final class UserController extends BaseController
         ]);
     }
 
+    /**
+     * Supprime un utilisateur et ses trajets (suppression en cascade) ; on ne peut pas supprimer son propre compte.
+     *
+     * @param string $id Identifiant de l'utilisateur (paramètre d'URL)
+     */
     public function delete(Request $request, Response $response, string $id): Response|RedirectResponse
     {
         if (!$this->csrfValid($request)) {

@@ -13,8 +13,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Connexion et déconnexion des utilisateurs.
+ *
+ * Les identifiants sont vérifiés par Auth ; chaque formulaire est protégé par un jeton CSRF.
+ */
 final class AuthController extends Controller
 {
+    /**
+     * Affiche le formulaire de connexion (ou redirige vers l'accueil si déjà connecté).
+     */
     public function showLogin(): RedirectResponse|string
     {
         if (Auth::check()) {
@@ -24,6 +32,12 @@ final class AuthController extends Controller
         return View::render('auth/login', ['title' => 'Connexion', 'error' => null, 'email' => '']);
     }
 
+    /**
+     * Traite le formulaire de connexion.
+     *
+     * Répond 419 (jeton CSRF invalide), 401 (identifiants incorrects) ou 503 (base indisponible),
+     * ou redirige vers l'accueil en cas de succès.
+     */
     public function login(Request $request, Response $response): RedirectResponse|Response
     {
         $email = (string) $request->request->get('email', '');
@@ -48,6 +62,9 @@ final class AuthController extends Controller
         return new RedirectResponse('/');
     }
 
+    /**
+     * Ferme la session de l'utilisateur (si le jeton CSRF est valide) et redirige vers l'accueil.
+     */
     public function logout(Request $request): RedirectResponse
     {
         if (Csrf::isValid($request->request->get('_csrf'))) {
@@ -57,6 +74,9 @@ final class AuthController extends Controller
         return new RedirectResponse('/');
     }
 
+    /**
+     * Réaffiche le formulaire de connexion avec un message d'erreur et le code HTTP donné.
+     */
     private function loginError(Response $response, int $status, string $error, string $email): Response
     {
         $response->setStatusCode($status);
