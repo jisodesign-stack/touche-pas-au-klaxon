@@ -91,7 +91,9 @@ final class AgencyRepository
      */
     public function update(int $id, string $nom): void
     {
-        Database::connection()->prepare('UPDATE agences SET nom = :nom WHERE id = :id')->execute(['nom' => $nom, 'id' => $id]);
+        Database::connection()
+            ->prepare('UPDATE agences SET nom = :nom WHERE id = :id')
+            ->execute(['nom' => $nom, 'id' => $id]);
     }
 
     /**

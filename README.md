@@ -107,6 +107,7 @@ déclarée une seule fois dans `scss/_variables.scss` et affectée aux variables
 
 | Commande | Description |
 |---|---|
+| `composer lint` | Vérifie le style du code (PSR-12 : indentation, longueur de ligne, en-têtes) avec PHP_CodeSniffer |
 | `composer analyse` | Analyse statique PHPStan (niveau 6) |
 | `composer test` | Tests PHPUnit (unitaires + intégration) |
 | `npm run build` / `npm run watch` | Compile le Sass (une fois / en continu) |
@@ -116,8 +117,9 @@ des trajets, des agences et des utilisateurs). Ils utilisent une base dédiée `
 (modifiable via `DB_NAME_TEST`), créée automatiquement ; chaque test est annulé par une transaction, la base de
 développement n'est donc jamais modifiée. Sans serveur MySQL joignable, ils sont ignorés.
 
-La CI GitHub Actions (`.github/workflows/ci.yml`) exécute l'analyse statique et les tests sur MySQL, et vérifie que
-le schéma et le jeu d'essais s'installent correctement.
+La CI GitHub Actions (`.github/workflows/ci.yml`) exécute le contrôle de style, l'analyse statique et les tests sur MySQL, et vérifie que
+le schéma et le jeu d'essais s'installent correctement. Les conventions d'indentation (4 espaces en PHP, fins de ligne LF)
+sont décrites dans `.editorconfig`.
 
 ## Conception de la base de données
 

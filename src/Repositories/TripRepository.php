@@ -6,12 +6,15 @@ namespace App\Repositories;
 
 use App\Core\Database;
 use App\Models\Trip;
+use App\Validation\TripValidator;
 use DateTimeImmutable;
 
 /**
  * Accès aux trajets : lecture (avec agences et auteur), création, modification, suppression.
  *
  * Les requêtes d'écriture « de l'auteur » vérifient que le trajet appartient bien à l'utilisateur.
+ *
+ * @phpstan-import-type TripData from TripValidator
  */
 final class TripRepository
 {
@@ -69,7 +72,7 @@ final class TripRepository
     /**
      * Crée un trajet.
      *
-     * @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data Données déjà validées
+     * @param TripData $data Données déjà validées
      * @param int $authorId Utilisateur qui propose le trajet
      * @return int Identifiant du trajet créé
      * @throws \PDOException Si une contrainte de la base est violée
@@ -78,8 +81,12 @@ final class TripRepository
     {
         $pdo = Database::connection();
         $stmt = $pdo->prepare(
-            'INSERT INTO trajets (agence_depart_id, agence_arrivee_id, date_depart, date_arrivee, places_total, places_disponibles, auteur_id)
-             VALUES (:depart, :arrivee, :date_depart, :date_arrivee, :total, :dispo, :auteur)',
+            'INSERT INTO trajets (
+                 agence_depart_id, agence_arrivee_id, date_depart, date_arrivee,
+                 places_total, places_disponibles, auteur_id
+             ) VALUES (
+                 :depart, :arrivee, :date_depart, :date_arrivee, :total, :dispo, :auteur
+             )',
         );
         $stmt->execute($this->params($data) + ['auteur' => $authorId]);
 
@@ -89,15 +96,17 @@ final class TripRepository
     /**
      * Modifie un trajet, uniquement s'il appartient à l'utilisateur donné.
      *
-     * @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data Données déjà validées
+     * @param TripData $data Données déjà validées
      * @return bool Faux si le trajet n'appartient pas à l'utilisateur, n'existe pas ou n'a subi aucun changement
      * @throws \PDOException Si une contrainte de la base est violée
      */
     public function update(int $id, int $authorId, array $data): bool
     {
         $stmt = Database::connection()->prepare(
-            'UPDATE trajets SET agence_depart_id = :depart, agence_arrivee_id = :arrivee, date_depart = :date_depart,
-                    date_arrivee = :date_arrivee, places_total = :total, places_disponibles = :dispo
+            'UPDATE trajets
+             SET agence_depart_id = :depart, agence_arrivee_id = :arrivee,
+                 date_depart = :date_depart, date_arrivee = :date_arrivee,
+                 places_total = :total, places_disponibles = :dispo
              WHERE id = :id AND auteur_id = :auteur',
         );
         $stmt->execute($this->params($data) + ['id' => $id, 'auteur' => $authorId]);
@@ -121,7 +130,7 @@ final class TripRepository
     /**
      * Convertit les données validées en paramètres de requête SQL.
      *
-     * @param array<string, mixed> $data
+     * @param TripData $data
      * @return array<string, mixed>
      */
     private function params(array $data): array
@@ -137,6 +146,9 @@ final class TripRepository
     }
 
     /**
+     * Exécute la requête de base complétée d'une clause (WHERE, ORDER BY…) et construit les trajets.
+     *
+     * @param string $clause Fin de requête SQL ; les valeurs variables passent par $params
      * @param array<string, mixed> $params
      * @return list<Trip>
      */

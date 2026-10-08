@@ -7,6 +7,9 @@ namespace Tests\Unit\Models;
 use App\Models\User;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests du modèle User (nom complet, rôle administrateur).
+ */
 final class UserTest extends TestCase
 {
     private function user(string $role): User

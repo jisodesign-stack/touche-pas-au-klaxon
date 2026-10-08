@@ -90,8 +90,10 @@ abstract class DatabaseTestCase extends TestCase
         $start = new \DateTimeImmutable($depart);
 
         $this->pdo->prepare(
-            'INSERT INTO trajets (agence_depart_id, agence_arrivee_id, date_depart, date_arrivee, places_total, places_disponibles, auteur_id)
-             VALUES (:depart, :arrivee, :date_depart, :date_arrivee, 4, :dispo, :auteur)',
+            'INSERT INTO trajets (
+                 agence_depart_id, agence_arrivee_id, date_depart, date_arrivee,
+                 places_total, places_disponibles, auteur_id
+             ) VALUES (:depart, :arrivee, :date_depart, :date_arrivee, 4, :dispo, :auteur)',
         )->execute([
             'depart' => $this->ids['depart'],
             'arrivee' => $this->ids['arrivee'],

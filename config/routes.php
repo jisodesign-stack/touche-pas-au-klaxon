@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Déclaration des routes de l'application.
  *
  * Fichier inclus par Application::run() : la variable $router (Buki\Router\Router) est disponible.
  * « Contrôleur@méthode » désigne une classe de src/Controllers ; l'option « before » applique un middleware.
  */
+
+declare(strict_types=1);
 
 use Buki\Router\Router;
 

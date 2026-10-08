@@ -59,7 +59,8 @@ final class UserRepository
     /**
      * Exécute une requête et retourne le premier utilisateur trouvé.
      *
-     * @param array<string, mixed> $params */
+     * @param array<string, mixed> $params
+     */
     private function fetchOne(string $sql, array $params): ?User
     {
         $stmt = Database::connection()->prepare($sql);
@@ -69,7 +70,11 @@ final class UserRepository
         return is_array($row) ? $this->hydrate($row) : null;
     }
 
-    /** @param array<string, mixed> $row */
+    /**
+     * Construit un utilisateur à partir d'une ligne de la table utilisateurs.
+     *
+     * @param array<string, mixed> $row
+     */
     private function hydrate(array $row): User
     {
         return new User(
