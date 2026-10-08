@@ -53,7 +53,15 @@ final class Application
 
         $router->notFound(function ($request, $response) {
             $response->setStatusCode(404);
-            $response->setContent(View::render('errors/404'));
+            $response->setContent(View::render('errors/404', ['title' => 'Page introuvable']));
+
+            return $response;
+        });
+
+        $router->error(function ($request, $response, $exception) {
+            error_log((string) $exception);
+            $response->setStatusCode(500);
+            $response->setContent(View::render('errors/500', ['title' => 'Erreur']));
 
             return $response;
         });

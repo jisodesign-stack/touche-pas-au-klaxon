@@ -6,6 +6,7 @@ namespace App\Security;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use PDOException;
 
 final class Auth
 {
@@ -34,7 +35,14 @@ final class Auth
     public static function user(): ?User
     {
         if (self::$user === null && isset($_SESSION[self::KEY])) {
-            self::$user = (new UserRepository())->findById((int) $_SESSION[self::KEY]);
+            try {
+                self::$user = (new UserRepository())->findById((int) $_SESSION[self::KEY]);
+            } catch (PDOException $e) {
+                // Base indisponible : on traite la requête comme anonyme sans fermer la session.
+                error_log($e->getMessage());
+
+                return null;
+            }
 
             if (self::$user === null) {
                 unset($_SESSION[self::KEY]);
