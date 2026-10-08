@@ -27,7 +27,13 @@ npm install
 npm run build
 ```
 
-Créez ensuite un fichier `.env` à la racine (il n'est pas versionné) avec les paramètres de votre base de données.
+Copiez ensuite `.env.example` vers `.env` (non versionné) et adaptez les paramètres de la base de données, puis lancez le serveur de développement :
+
+```bash
+php -S 127.0.0.1:8000 -t public
+```
+
+L'application est alors accessible sur http://127.0.0.1:8000.
 
 ## Scripts utiles
 
