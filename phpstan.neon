@@ -1,0 +1,10 @@
+parameters:
+    level: 6
+    paths:
+        - src
+        - config
+        - bin
+        - public/index.php
+    excludePaths:
+        # Les vues sont des templates dont les variables sont injectées par extract().
+        - src/Views

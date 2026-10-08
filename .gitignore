@@ -2,6 +2,8 @@
 /vendor/
 .env
 .env.*
+!.env.example
 *.log
+.phpunit.result.cache
 .idea/
 .vscode/
