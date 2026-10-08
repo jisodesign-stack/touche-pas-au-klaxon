@@ -38,6 +38,17 @@ final class TripRepository
         return $this->fetchAll('WHERE t.auteur_id = :auteur ORDER BY t.date_depart DESC', ['auteur' => $authorId]);
     }
 
+    /** @return list<Trip> */
+    public function findAll(): array
+    {
+        return $this->fetchAll('ORDER BY t.date_depart DESC');
+    }
+
+    public function deleteById(int $id): void
+    {
+        Database::connection()->prepare('DELETE FROM trajets WHERE id = :id')->execute(['id' => $id]);
+    }
+
     public function findById(int $id): ?Trip
     {
         return $this->fetchAll('WHERE t.id = :id', ['id' => $id])[0] ?? null;

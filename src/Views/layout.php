@@ -15,6 +15,9 @@
                 <form method="post" action="/deconnexion" class="d-flex align-items-center gap-3 m-0">
                     <?= View::csrfField() ?>
                     <a class="nav-link text-white-50" href="/mes-trajets">Mes trajets</a>
+                    <?php if ($currentUser->isAdmin()): ?>
+                        <a class="nav-link text-white-50" href="/admin">Administration</a>
+                    <?php endif; ?>
                     <span class="navbar-text"><?= View::escape($currentUser->fullName()) ?></span>
                     <button type="submit" class="btn btn-outline-light btn-sm">Déconnexion</button>
                 </form>
