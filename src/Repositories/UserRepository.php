@@ -19,6 +19,22 @@ final class UserRepository
         return $this->fetchOne('SELECT * FROM utilisateurs WHERE email = :email', ['email' => $email]);
     }
 
+    /** @return list<User> */
+    public function all(): array
+    {
+        $users = [];
+        foreach (Database::connection()->query('SELECT * FROM utilisateurs ORDER BY nom, prenom') as $row) {
+            $users[] = $this->hydrate($row);
+        }
+
+        return $users;
+    }
+
+    public function delete(int $id): void
+    {
+        Database::connection()->prepare('DELETE FROM utilisateurs WHERE id = :id')->execute(['id' => $id]);
+    }
+
     /** @param array<string, mixed> $params */
     private function fetchOne(string $sql, array $params): ?User
     {
@@ -26,10 +42,12 @@ final class UserRepository
         $stmt->execute($params);
         $row = $stmt->fetch();
 
-        if (!is_array($row)) {
-            return null;
-        }
+        return is_array($row) ? $this->hydrate($row) : null;
+    }
 
+    /** @param array<string, mixed> $row */
+    private function hydrate(array $row): User
+    {
         return new User(
             (int) $row['id'],
             (string) $row['nom'],
