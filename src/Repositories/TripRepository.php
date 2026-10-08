@@ -8,8 +8,14 @@ use App\Core\Database;
 use App\Models\Trip;
 use DateTimeImmutable;
 
+/**
+ * Accès aux trajets : lecture (avec agences et auteur), création, modification, suppression.
+ *
+ * Les requêtes d'écriture « de l'auteur » vérifient que le trajet appartient bien à l'utilisateur.
+ */
 final class TripRepository
 {
+    /** Requête de base : trajet avec noms des agences et coordonnées de l'auteur. */
     private const SELECT = <<<'SQL'
         SELECT t.id, t.agence_depart_id, d.nom AS agence_depart, t.agence_arrivee_id, a.nom AS agence_arrivee,
                t.date_depart, t.date_arrivee, t.places_total, t.places_disponibles, t.auteur_id,
@@ -32,23 +38,42 @@ final class TripRepository
         );
     }
 
-    /** @return list<Trip> */
+    /**
+     * Tous les trajets (passés, complets…), du plus récent au plus ancien — usage administrateur.
+     *
+     * @return list<Trip>
+     */
     public function findAll(): array
     {
         return $this->fetchAll('ORDER BY t.date_depart DESC');
     }
 
+    /**
+     * Supprime un trajet quel que soit son auteur — usage administrateur.
+     */
     public function deleteById(int $id): void
     {
         Database::connection()->prepare('DELETE FROM trajets WHERE id = :id')->execute(['id' => $id]);
     }
 
+    /**
+     * Retrouve un trajet par son identifiant.
+     *
+     * @return Trip|null Null si le trajet n'existe pas
+     */
     public function findById(int $id): ?Trip
     {
         return $this->fetchAll('WHERE t.id = :id', ['id' => $id])[0] ?? null;
     }
 
-    /** @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data */
+    /**
+     * Crée un trajet.
+     *
+     * @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data Données déjà validées
+     * @param int $authorId Utilisateur qui propose le trajet
+     * @return int Identifiant du trajet créé
+     * @throws \PDOException Si une contrainte de la base est violée
+     */
     public function create(array $data, int $authorId): int
     {
         $pdo = Database::connection();
@@ -61,7 +86,13 @@ final class TripRepository
         return (int) $pdo->lastInsertId();
     }
 
-    /** @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data */
+    /**
+     * Modifie un trajet, uniquement s'il appartient à l'utilisateur donné.
+     *
+     * @param array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int} $data Données déjà validées
+     * @return bool Faux si le trajet n'appartient pas à l'utilisateur, n'existe pas ou n'a subi aucun changement
+     * @throws \PDOException Si une contrainte de la base est violée
+     */
     public function update(int $id, int $authorId, array $data): bool
     {
         $stmt = Database::connection()->prepare(
@@ -74,6 +105,11 @@ final class TripRepository
         return $stmt->rowCount() > 0;
     }
 
+    /**
+     * Supprime un trajet, uniquement s'il appartient à l'utilisateur donné.
+     *
+     * @return bool Faux si le trajet n'appartient pas à l'utilisateur ou n'existe pas
+     */
     public function delete(int $id, int $authorId): bool
     {
         $stmt = Database::connection()->prepare('DELETE FROM trajets WHERE id = :id AND auteur_id = :auteur');
@@ -83,6 +119,8 @@ final class TripRepository
     }
 
     /**
+     * Convertit les données validées en paramètres de requête SQL.
+     *
      * @param array<string, mixed> $data
      * @return array<string, mixed>
      */

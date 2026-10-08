@@ -6,9 +6,16 @@ namespace App\Repositories;
 
 use App\Core\Database;
 
+/**
+ * Accès aux agences (villes) : lecture, création, modification, suppression.
+ */
 final class AgencyRepository
 {
-    /** @return list<array{id: int, nom: string}> */
+    /**
+     * Toutes les agences, triées par nom.
+     *
+     * @return list<array{id: int, nom: string}>
+     */
     public function all(): array
     {
         $agencies = [];
@@ -19,7 +26,11 @@ final class AgencyRepository
         return $agencies;
     }
 
-    /** @return list<array{id: int, nom: string, trajets: int}> */
+    /**
+     * Toutes les agences avec le nombre de trajets (au départ ou à l'arrivée) qui les utilisent.
+     *
+     * @return list<array{id: int, nom: string, trajets: int}>
+     */
     public function allWithTripCount(): array
     {
         $sql = 'SELECT a.id, a.nom, COUNT(t.id) AS trajets
@@ -36,7 +47,11 @@ final class AgencyRepository
         return $agencies;
     }
 
-    /** @return array{id: int, nom: string}|null */
+    /**
+     * Retrouve une agence par son identifiant.
+     *
+     * @return array{id: int, nom: string}|null Null si l'agence n'existe pas
+     */
     public function find(int $id): ?array
     {
         $stmt = Database::connection()->prepare('SELECT id, nom FROM agences WHERE id = :id');
@@ -46,6 +61,11 @@ final class AgencyRepository
         return is_array($row) ? ['id' => (int) $row['id'], 'nom' => (string) $row['nom']] : null;
     }
 
+    /**
+     * Indique si une agence porte déjà ce nom.
+     *
+     * @param int|null $exceptId Agence à ignorer (celle en cours de modification)
+     */
     public function nameExists(string $nom, ?int $exceptId = null): bool
     {
         $stmt = Database::connection()->prepare('SELECT COUNT(*) FROM agences WHERE nom = :nom AND id <> :id');
@@ -54,21 +74,39 @@ final class AgencyRepository
         return (int) $stmt->fetchColumn() > 0;
     }
 
+    /**
+     * Crée une agence.
+     *
+     * @throws \PDOException Si le nom existe déjà (contrainte d'unicité)
+     */
     public function create(string $nom): void
     {
         Database::connection()->prepare('INSERT INTO agences (nom) VALUES (:nom)')->execute(['nom' => $nom]);
     }
 
+    /**
+     * Renomme une agence.
+     *
+     * @throws \PDOException Si le nom existe déjà (contrainte d'unicité)
+     */
     public function update(int $id, string $nom): void
     {
         Database::connection()->prepare('UPDATE agences SET nom = :nom WHERE id = :id')->execute(['nom' => $nom, 'id' => $id]);
     }
 
+    /**
+     * Supprime une agence.
+     *
+     * @throws \PDOException Si des trajets utilisent l'agence (clé étrangère)
+     */
     public function delete(int $id): void
     {
         Database::connection()->prepare('DELETE FROM agences WHERE id = :id')->execute(['id' => $id]);
     }
 
+    /**
+     * Nombre de trajets qui partent de l'agence ou y arrivent.
+     */
     public function tripCount(int $id): int
     {
         $stmt = Database::connection()->prepare(

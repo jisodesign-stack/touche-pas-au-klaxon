@@ -7,19 +7,37 @@ namespace App\Repositories;
 use App\Core\Database;
 use App\Models\User;
 
+/**
+ * Accès aux utilisateurs. Les employés viennent du système RH :
+ * seule la suppression est prévue (administration), pas de création ni de modification.
+ */
 final class UserRepository
 {
+    /**
+     * Retrouve un utilisateur par son identifiant.
+     *
+     * @return User|null Null s'il n'existe pas
+     */
     public function findById(int $id): ?User
     {
         return $this->fetchOne('SELECT * FROM utilisateurs WHERE id = :id', ['id' => $id]);
     }
 
+    /**
+     * Retrouve un utilisateur par son adresse email (identifiant de connexion).
+     *
+     * @return User|null Null s'il n'existe pas
+     */
     public function findByEmail(string $email): ?User
     {
         return $this->fetchOne('SELECT * FROM utilisateurs WHERE email = :email', ['email' => $email]);
     }
 
-    /** @return list<User> */
+    /**
+     * Tous les utilisateurs, triés par nom puis prénom.
+     *
+     * @return list<User>
+     */
     public function all(): array
     {
         $users = [];
@@ -30,12 +48,18 @@ final class UserRepository
         return $users;
     }
 
+    /**
+     * Supprime un utilisateur ; ses trajets sont supprimés en cascade par la base.
+     */
     public function delete(int $id): void
     {
         Database::connection()->prepare('DELETE FROM utilisateurs WHERE id = :id')->execute(['id' => $id]);
     }
 
-    /** @param array<string, mixed> $params */
+    /**
+     * Exécute une requête et retourne le premier utilisateur trouvé.
+     *
+     * @param array<string, mixed> $params */
     private function fetchOne(string $sql, array $params): ?User
     {
         $stmt = Database::connection()->prepare($sql);

@@ -7,11 +7,21 @@ namespace App\Core;
 use Buki\Router\Router;
 use Dotenv\Dotenv;
 
+/**
+ * Point d'entrée applicatif : charge la configuration (.env), démarre la session,
+ * déclare le routeur et exécute la requête.
+ *
+ * Pour réutiliser le socle dans un autre site, il suffit de fournir un autre
+ * répertoire de base contenant config/, src/ et public/.
+ */
 final class Application
 {
     /** @var array{name: string, env: string, debug: bool} */
     private array $config;
 
+    /**
+     * @param string $basePath Racine du projet (contient config/, src/, public/)
+     */
     public function __construct(private readonly string $basePath)
     {
         Dotenv::createImmutable($this->basePath)->safeLoad();
@@ -25,6 +35,9 @@ final class Application
         $this->startSession();
     }
 
+    /**
+     * Démarre la session avec des cookies HttpOnly, SameSite=Lax (et Secure en HTTPS).
+     */
     private function startSession(): void
     {
         ini_set('session.use_strict_mode', '1');
@@ -36,6 +49,10 @@ final class Application
         session_start();
     }
 
+    /**
+     * Configure le routeur (contrôleurs, middlewares, pages 404 et 500), charge config/routes.php
+     * et traite la requête courante.
+     */
     public function run(): void
     {
         $router = new Router([
