@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use App\Repositories\TripRepository;
+use App\Validation\TripValidator;
 use DateTimeImmutable;
 use PDOException;
 
+/**
+ * Tests des écritures sur la table trajets (création, modification, suppression).
+ *
+ * @phpstan-import-type TripData from TripValidator
+ */
 final class TripRepositoryTest extends DatabaseTestCase
 {
     /**
-     * @return array{depart_id: int, arrivee_id: int, date_depart: DateTimeImmutable, date_arrivee: DateTimeImmutable, places_total: int, places_disponibles: int}
+     * Données valides d'un trajet, utilisables comme base de test.
+     *
+     * @return TripData
      */
     private function data(): array
     {
@@ -45,7 +53,11 @@ final class TripRepositoryTest extends DatabaseTestCase
         $repository = new TripRepository();
         $id = $repository->create($this->data(), $this->ids['auteur']);
 
-        $changes = ['arrivee_id' => $this->ids['autre'], 'places_total' => 6, 'places_disponibles' => 1] + $this->data();
+        $changes = [
+            'arrivee_id' => $this->ids['autre'],
+            'places_total' => 6,
+            'places_disponibles' => 1,
+        ] + $this->data();
 
         $this->assertTrue($repository->update($id, $this->ids['auteur'], $changes));
 

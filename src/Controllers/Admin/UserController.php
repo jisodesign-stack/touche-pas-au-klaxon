@@ -49,7 +49,11 @@ final class UserController extends BaseController
         }
 
         if ($user->id === (Auth::user()->id ?? 0)) {
-            return $this->redirect('/admin/utilisateurs', 'danger', 'Vous ne pouvez pas supprimer votre propre compte.');
+            return $this->redirect(
+                '/admin/utilisateurs',
+                'danger',
+                'Vous ne pouvez pas supprimer votre propre compte.',
+            );
         }
 
         $users->delete($user->id);
