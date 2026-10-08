@@ -27,7 +27,13 @@ npm install
 npm run build
 ```
 
-Copiez ensuite `.env.example` vers `.env` (non versionné) et adaptez les paramètres de la base de données, puis lancez le serveur de développement :
+Copiez ensuite `.env.example` vers `.env` (non versionné) et adaptez les paramètres de la base de données. Créez la base, le schéma et les données de démonstration (comptes `admin@klaxon.test`, `bob.martin@klaxon.test`… avec le mot de passe `Password123!`) :
+
+```bash
+php bin/db-install.php
+```
+
+Cette commande **supprime et recrée** la base définie par `DB_NAME`. Ajoutez `--no-seed` pour ne charger que le schéma. Lancez ensuite le serveur de développement :
 
 ```bash
 php -S 127.0.0.1:8000 -t public
