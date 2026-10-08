@@ -15,14 +15,14 @@ $isLogged = Auth::check();
     <p class="text-muted">Aucun trajet disponible pour le moment.</p>
 <?php else: ?>
     <div class="table-responsive">
-        <table class="table table-striped align-middle">
+        <table class="table table-striped app-table">
             <thead>
                 <tr>
                     <th>Départ</th>
                     <th>Date et heure de départ</th>
                     <th>Arrivée</th>
                     <th>Date et heure d'arrivée</th>
-                    <th class="text-center">Places</th>
+                    <th>Places</th>
                     <?php if ($isLogged): ?>
                         <th>Contact</th>
                     <?php endif; ?>
@@ -35,11 +35,11 @@ $isLogged = Auth::check();
                         <td><?= $trip->dateDepart->format('d/m/Y à H\hi') ?></td>
                         <td><?= View::escape($trip->agenceArrivee) ?></td>
                         <td><?= $trip->dateArrivee->format('d/m/Y à H\hi') ?></td>
-                        <td class="text-center"><?= $trip->placesDisponibles ?> / <?= $trip->placesTotal ?></td>
+                        <td><?= $trip->placesDisponibles ?> / <?= $trip->placesTotal ?></td>
                         <?php if ($isLogged): ?>
                             <td>
                                 <?= View::escape($trip->auteurNom) ?><br>
-                                <small><?= View::escape($trip->auteurTelephone) ?> · <?= View::escape($trip->auteurEmail) ?></small>
+                                <small><i class="bi bi-telephone" aria-hidden="true"></i> <?= View::escape($trip->auteurTelephone) ?> · <i class="bi bi-envelope" aria-hidden="true"></i> <?= View::escape($trip->auteurEmail) ?></small>
                             </td>
                         <?php endif; ?>
                     </tr>
